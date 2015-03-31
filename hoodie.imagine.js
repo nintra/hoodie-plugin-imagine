@@ -6,11 +6,15 @@ Hoodie.extend(function(hoodie, lib, utils) {
 
     var imagine = (function() {
 
-        config.general.basePath = '/' + config.general.directory;
 
-        if (!config.groups || !config.groups.length ||
+        if (!config ||
+            !config.groups || !config.groups.length ||
             !config.types || !config.types.length) {
+
             console.warn('please configure imagine first!');
+
+        } else {
+            config.general.basePath = '/' + config.general.directory;
         }
 
 
