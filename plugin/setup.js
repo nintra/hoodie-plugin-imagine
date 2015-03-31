@@ -19,7 +19,7 @@ module.exports = function(hoodie, callback) {
 
 
     // create a copy of the configuration for the client
-    fs.writeFileSync('config.json',
+    fs.writeFileSync('./node_modules/hoodie-plugin-imagine/config.json',
         JSON.stringify({
             general: config.general,
             groups : config.groups,
