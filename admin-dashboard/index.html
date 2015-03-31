@@ -1,0 +1,228 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title>imagine</title>
+    <link rel="stylesheet" href="/_api/_plugins/_assets/styles/admin-dashboard-uikit.css">
+    <link rel="stylesheet" href="assets/styles/main.css">
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>Imagine</h1>
+
+
+        <div id="plugin-imagine">
+
+            <ul class="tabs">
+                <li data-tab="settings" class="active">Settings</li>
+                <li data-tab="verification">Image Verification</li>
+            </ul>
+
+
+            <div class="tab-containers">
+
+                <div id="settings" class="active">
+
+                    <form class="general">
+
+                        <h2>General</h2>
+
+                        <fieldset>
+                            <label for="directory">Image directory</label>
+                            <input type="text" pattern="[a-z0-9-]+" class="form-control" name="directory" id="directory" placeholder="directory" required>
+                            <p class="help-block">Required, directory to save uploaded images to, url friendly, auto-generated, relative to your projects www root. e.g. <i>images</i></p>
+
+
+                            <label for="client-resize">Client-side resize</label>
+
+                            <div class="checkbox">
+                                <input type="checkbox" name="client-resize" id="client-resize">
+                                <label for="client-resize">resize images (recommended)</label>
+                            </div>
+                            <p class="help-block">resizing is recommended to reduce bandwidth and to avoid breaking the localStorage limit of 5.2 MB for all data. requires canvas support.</p>
+
+                            <label for="resize-width">Width &amp; Height</label>
+                            <div class="one-row">
+                                <input type="number" min="50" max="2500" class="form-control" name="resize-width" placeholder="1000" required disabled>
+                                <input type="number" min="50" max="2500" class="form-control" name="resize-height" placeholder="1000" required disabled>
+                            </div>
+
+                            <p class="help-block">
+                                Images get resized to fit into this bounding box while keeping their aspect ratio.
+                            </p>
+
+
+                            <button class="btn ok" type="submit">Save</button>
+                        </fieldset>
+
+                    </form>
+
+
+
+
+
+                    <form class="groups">
+
+                        <h2>Image Groups</h2>
+
+                        <fieldset>
+                            <label for="group">Choose Group</label>
+                            <div id="group"></div>
+                            <p class="help-block">do you want to edit a group or add a new one</p>
+                        </fieldset>
+
+                        <fieldset class="group">
+                            <label for="group-name">Name</label>
+                            <input type="text" pattern="[a-z0-9-]+" class="form-control" name="group[name]" id="group-name" placeholder="user, post, bike, &hellip;" required>
+                            <p class="help-block">name of a class of images, url friendly</p>
+
+
+                            <div class="checkbox">
+                                <input type="checkbox" name="group[public]" id="group-public">
+                                <label for="group-public">public</label>
+                            </div>
+                            <p class="help-block">publish images in this group to all users</p>
+
+
+                            <label>Verification</label>
+                            <div class="radio">
+                                <input type="radio" id="group-verify-before" name="group[verify]" value="before">
+                                <label for="group-verify-before">before</label>
+                            </div>
+                            <p class="help-block">images need to be verified, prior being visible to users</p>
+                            <div class="radio">
+                                <input type="radio" id="group-verify-after" name="group[verify]" value="after">
+                                <label for="group-verify-after">after</label>
+                            </div>
+                            <p class="help-block">images are immediately public, but can be checked later</p>
+
+
+                            <label for="group-types">Types</label>
+                            <div id="group-types"></div>
+                            <p class="help-block">on every upload, different types of an image are created</p>
+
+
+                            <div class="error"></div>
+                            <button class="btn ok" type="submit">Save</button>
+                            <button class="btn danger remove">Remove</button>
+                        </fieldset>
+
+                    </form>
+
+
+
+
+
+                    <form class="types">
+
+                        <h2>Image Types</h2>
+
+                        <fieldset>
+                            <label for="type">Choose Type</label>
+                            <div id="type"></div>
+                            <p class="help-block">do you want to edit a type or add a new one</p>
+                        </fieldset>
+
+                        <fieldset class="type">
+                            <label for="type-name">Name</label>
+                            <input type="text" pattern="[a-z0-9-]+" class="form-control" name="type[name]" id="type-name" placeholder="square, header-big, sepia, &hellip;" required>
+                            <p class="help-block">name for a version of an image, url friendly</p>
+
+
+                            <label for="client-resizing">Image size</label>
+
+                            <div class="checkbox">
+                                <input type="checkbox" name="type[resize]" id="type-resize">
+                                <label for="type-resize">resize</label>
+                            </div>
+
+                            <label for="">Width &amp; Height</label>
+                            <div class="one-row">
+                                <input type="number" min="50" max="2500" class="form-control" name="type[resize][width]" id="type-resize-width" placeholder="400" required disabled>
+                                <input type="number" min="50" max="2500" class="form-control" name="type[resize][height]" id="type-resize-height" placeholder="300" required disabled>
+                            </div>
+
+                            <div class="radio">
+                                <input type="radio" id="type-resize-method-contain" name="type[resize-method]" value="contain" disabled>
+                                <label for="type-resize-method-contain">contain</label>
+                            </div>
+                            <p class="help-block">fit in defined rectangle while keeping aspect ratio</p>
+                            <div class="radio">
+                                <input type="radio" id="type-resize-method-cover" name="type[resize-method]" value="cover" disabled>
+                                <label for="type-resize-method-cover">cover</label>
+                            </div>
+                            <p class="help-block">cover defined rectangle while keeping aspect ratio</p>
+
+
+                            <label for="type-format">Format</label>
+                            <div class="radio">
+                                <input type="radio" id="type-format-none" name="type[format]" value="" checked>
+                                <label for="type-format-none">source format</label>
+                            </div>
+                            <div class="radio">
+                                <input type="radio" id="type-format-jpg" name="type[format]" value="jpg">
+                                <label for="type-format-jpg">jpg</label>
+                            </div>
+                            <div class="radio">
+                                <input type="radio" id="type-format-png" name="type[format]" value="png">
+                                <label for="type-format-png">png</label>
+                            </div>
+
+                            <label for="type-quality">Quality</label>
+                            <output for="type-quality" id="type-quality-output">0</output>
+                            <input type="range" min="0" max="100" step="1" class="form-control" name="type[quality]" id="type-quality" required>
+
+
+                            <label for="client-resizing">Filters</label>
+                            <p class="help-block">
+                                Examples: sepia; blur 30, 20; monochrome; colorize 100, 0, 0; modulate 100, 50; &hellip; <a href="//aheckmann.github.io/gm/docs.html" target="_blank">Documentation</a>
+                            </p>
+                            <div class="filters-container">
+
+                                <ul class="filters"></ul>
+
+                                <button class="btn ok add-filter">Add Filter</button>
+
+                            </div>
+
+
+                            <div class="error"></div>
+                            <button class="btn ok" type="submit">Save</button>
+                            <button class="btn danger remove">Remove</button>
+                        </fieldset>
+
+                    </form>
+
+                </div> <!-- /settings -->
+
+
+
+                <div id="verification" class="tab">
+                    coming soon
+                </div> <!-- /verification -->
+
+            </div>
+
+
+        </div>
+
+
+
+    </div>
+
+    <script src="/_api/_plugins/_assets/scripts/admin-dashboard-uikit.js"></script>
+
+    <!-- development -->
+    <!-- <script src="assets/vendor/requirejs/require.js"></script>
+    <script src="assets/scripts/src/main.js"></script>
+    <script src="//127.0.0.1:35729/livereload.js?snipver=1"></script> -->
+
+    <!-- production -->
+    <script src="assets/scripts/main.js"></script>
+
+</body>
+</html>

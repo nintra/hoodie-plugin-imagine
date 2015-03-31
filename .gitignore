@@ -1,0 +1,11 @@
+
+_ideas.md
+/node_modules
+/data
+
+/www
+
+/admin-dashboard/assets/vendor
+
+
+npm-debug.log
