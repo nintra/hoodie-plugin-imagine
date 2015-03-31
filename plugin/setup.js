@@ -1,8 +1,9 @@
 
 
 
-var fs = require('fs'),
-    _  = require('lodash'),
+var fs  = require('fs'),
+    fse = require('fs-extra'),
+    _   = require('lodash'),
 
     getConfig = require('./config');
 
@@ -28,7 +29,7 @@ module.exports = function(hoodie, callback) {
 
 
     // create directory
-    fs.mkdir(config.basePath, function(error) {
+    fse.mkdirs(config.basePath, function(error) {
         if (error && error.code !== 'EEXIST') {
             return callback(error);
         }

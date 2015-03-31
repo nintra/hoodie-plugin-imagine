@@ -1,8 +1,8 @@
 
 
 
-var fs  = require('fs'),
-    _   = require('lodash');
+var fs = require('fs'),
+    _  = require('lodash');
 
 
 
@@ -19,7 +19,7 @@ module.exports = function(hoodie) {
         return false;
     }
 
-    config.basePath = hoodie.env.www_root + '/' + general.directory;
+    config.basePath = hoodie.env.project_dir + '/' + general.directory;
     config.general  = general;
 
     config.groups   = hoodie.config.get('groups');

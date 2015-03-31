@@ -33,8 +33,8 @@
 
                         <fieldset>
                             <label for="directory">Image directory</label>
-                            <input type="text" pattern="[a-z0-9-]+" class="form-control" name="directory" id="directory" placeholder="directory" required>
-                            <p class="help-block">Required, directory to save uploaded images to, url friendly, auto-generated, relative to your projects www root. e.g. <i>images</i></p>
+                            <input type="text" pattern="[a-z0-9-/]+" class="form-control" name="directory" id="directory" placeholder="directory" required>
+                            <p class="help-block">Required, directory to save uploaded images to, url friendly, auto-generated, relative to your project dir. e.g. <i>www/images</i></p>
 
 
                             <label for="client-resize">Client-side resize</label>
