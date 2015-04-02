@@ -1,6 +1,6 @@
 {
   "name": "hoodie-plugin-imagine",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Hoodie plugin for handling images",
   "devDependencies": {
     "mocha": "~1.17.1",
@@ -29,15 +29,17 @@
   "hoodie": {
     "plugins": [
       "hoodie-plugin-users",
-      "hoodie-plugin-imagine"
+      "hoodie-plugin-imagine",
+      "hoodie-plugin-appconfig"
     ]
   },
   "dependencies": {
     "fs-extra": "^0.16.5",
+    "gm": "^1.17.0",
+    "hoodie-plugin-appconfig": "^2.0.1",
     "lodash": "^3.5.0",
     "revalidator": "^0.3.1",
-    "shortid": "^2.2.1",
-    "gm": "^1.17.0"
+    "shortid": "^2.2.1"
   },
   "main": "plugin/worker.js",
   "maintainers": [

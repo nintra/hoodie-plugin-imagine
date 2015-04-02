@@ -4,6 +4,7 @@ var config = require('./../../../../hoodie-plugin-imagine/config.json');
 
 Hoodie.extend(function(hoodie, lib, utils) {
 
+
     var imagine = (function() {
 
 
@@ -183,15 +184,12 @@ Hoodie.extend(function(hoodie, lib, utils) {
 
                 createTask = function(dataUrl) {
                     var settings = {
-                        method : opts.method,
-                        group  : opts.group,
-                        data   : dataUrl,
-                        options: opts.options
+                        method  : opts.method,
+                        objectId: opts.id,
+                        group   : opts.group,
+                        data    : dataUrl,
+                        options : opts.options
                     };
-
-                    if (opts.id) {
-                        settings.objectId = opts.id;
-                    }
 
                     hoodie.task.start('imagine', settings)
                         .done(function(image) {
@@ -211,19 +209,24 @@ Hoodie.extend(function(hoodie, lib, utils) {
 
                 if (config.general.clientResize) {
 
-                    setTimeout(function() {
-                        downSizeImage({
-                                dataUrl: opts.imageData,
-                                size: {
-                                    width : config.general.clientResize[0],
-                                    height: config.general.clientResize[1]
-                                }
-                            })
-                            .done(function(dataUrl) {
-                                createTask(dataUrl);
-                            })
-                            .fail(defer.reject);
-                    }, 1);
+                    downSizeImage({
+                            dataUrl: opts.imageData,
+                            size: {
+                                width : config.general.clientResize[0],
+                                height: config.general.clientResize[1]
+                            }
+                        })
+                        .done(function(dataUrl) {
+
+                            // notify that resizing finished
+                            defer.notify({
+                                id     : opts.id,
+                                dataUrl: dataUrl
+                            });
+
+                            createTask(dataUrl);
+                        })
+                        .fail(defer.reject);
 
                 } else {
                     createTask(opts.imageData);
@@ -240,6 +243,7 @@ Hoodie.extend(function(hoodie, lib, utils) {
         function addImage(group, imageData, options) {
             return updateCreateImage({
                 method   : 'add',
+                id       : utils.generateId(),
                 group    : group,
                 imageData: imageData,
                 options  : options

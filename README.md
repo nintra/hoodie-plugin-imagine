@@ -4,7 +4,7 @@ Imagine is a [hoodie](//hood.ie) plugin for handling image uploads. This is a fu
 
 ## features
 - resizes images client-side to reduce traffic and server processing time
-- uploads images when a connection to the server is established
+- uploads images when a connection to the server is established: offline first
 - images may be public or private
 - verify images in the backend (pre- or post-verification)
 - create image groups and types to manage images
@@ -19,7 +19,7 @@ Imagine is a [hoodie](//hood.ie) plugin for handling image uploads. This is a fu
 
 
 ## API
-All plugin methods are returning promises. 
+All plugin methods are returning promises. Also `.add` and `.update` call a progress as soon as an image is resized client-side.
 ```javascript
 // uploads an image and returns a image object
 hoodie.imagine.add(group, dataUrl);
@@ -40,25 +40,66 @@ hoodie.imagine.remove(id);
 // remove all images by current user
 hoodie.imagine.removeOwn([group]);
 
-// a image object has a id property and a url method. 
-image.id
-image.url(type)
+// a preview image will be returned by a progress call (.add and .update only)
+previewImage.id; // final id of the image, keep it for later ;)
+previewImage.dataUrl; // dataUrl of resized image
+
+// an image object has an id property and a url method. 
+image.id;
+image.url(type);
 ```
 
 
 ## keep in mind
-There is currently no group/type update mechanism. Your changes will be applied to new uploads only (`.add`, `.update`). When changing the configuration you have to get a newly build hoodie.js. It may be sufficient to refresh the page. You *don't need* to restart the hoodie server to apply the configuration.
+There is currently no group/type update mechanism. Your changes will be applied to new uploads only (`.add`, `.update`). You *need* to restart the hoodie server to apply the configuration.
 
 
 ## example
 ```javascript
-hoodie.imagine.add('profile', 'data:image/png;base64,...')
-    .done(function(image) {
-        $('img.profile-picture').attr('src', image.url('detail'));
-    })
-    .fail(function(error) {
-        // oh noes
-    });
+// upload file
+function handleFile(file) {
+    return function(ev) {
+        var dataUrl = ev.target.result;
+
+        hoodie.imagine.add('profile', 'data:image/png;base64,...')
+            .progress(function(image) {
+                // image id and resized image is ready                
+                // show preview image
+                $('img.profile-picture').attr('src', image.dataUrl);
+            })
+            .done(function(image) {
+                // image has been save on the server
+                $('img.profile-picture').attr('src', image.url('detail'));
+            })
+            .fail(function(error) {
+                // oh noes
+                console.warn(error);
+            });        
+    };
+}
+
+
+
+// handle selection of file input
+function handleFileSelect(ev) {
+    ev.preventDefault();
+
+    var files = ev.target.files,
+        i, file;
+
+    for (i = 0; (file = files[i]); i++) {
+
+        if (!file.type.match('image.*')) {
+            continue;
+        }
+
+        var reader = new FileReader();
+        reader.onload = handleFile(file);
+        reader.readAsDataURL(file);
+    }
+}
+
+$('#file-input').on('change', handleFileSelect);
 ```
 
 

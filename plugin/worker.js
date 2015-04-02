@@ -68,7 +68,7 @@ module.exports = function(hoodie, callback) {
     // adds an image and returns an image object
     Imagine.prototype.add = function(taskData) {
         var self   = this,
-            result = self.utils.validateData(['data', 'group', 'options'], taskData);
+            result = self.utils.validateData(['objectId', 'data', 'group', 'options'], taskData);
 
         if (!result.valid) {
             return self.request.error(result);
@@ -94,7 +94,7 @@ module.exports = function(hoodie, callback) {
 
 
             imageData.sourceFormat = processedData.sourceFormat;
-            imageData.id = self.utils.generateId();
+            imageData.id = taskData.objectId;
 
             database.add('image', imageData, function(error, image) {
                 if (error) {
