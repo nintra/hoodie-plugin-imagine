@@ -117,11 +117,11 @@ module.exports = function(config) {
                     }
 
 
-                    if (type.size && _.isArray(type.size)) {
+                    if (type.resize && _.isArray(type.resize)) {
 
-                        var canvasRatio  = type.size[0] / type.size[1],
-                            canvasWidth  = type.size[0],
-                            canvasHeight = type.size[1];
+                        var canvasRatio  = type.resize[0] / type.resize[1],
+                            canvasWidth  = type.resize[0],
+                            canvasHeight = type.resize[1];
 
                         image = image
                             .gravity('Center');

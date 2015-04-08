@@ -22,8 +22,8 @@ module.exports = function(hoodie) {
     config.basePath = hoodie.env.www_root + '/' + general.directory;
     config.general  = general;
 
-    config.groups   = hoodie.config.get('groups');
-    config.types    = hoodie.config.get('types');
+    config.groups = hoodie.config.get('groups');
+    config.types  = hoodie.config.get('types');
 
 
     config.admin = hoodie.config.get('admin');
@@ -36,7 +36,7 @@ module.exports = function(hoodie) {
                     size   : [150, 150],
                     method : 'cover',
                     format : 'jpg',
-                    quality: 95
+                    quality: 90
                 },
                 {
                     id     : 'VkHcbtFVJQfZtF',
@@ -44,7 +44,7 @@ module.exports = function(hoodie) {
                     size   : [500, 500],
                     method : 'contain',
                     format : 'jpg',
-                    quality: 90
+                    quality: 85
                 }
             ]
         };
