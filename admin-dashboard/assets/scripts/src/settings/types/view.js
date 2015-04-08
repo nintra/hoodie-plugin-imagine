@@ -31,7 +31,7 @@ define(function(require) {
             '$inputResizeWidth' : '#type-resize-width',
             '$inputResizeHeight': '#type-resize-height',
 
-            '$radioResizeMethod': '[name="type[resize-method]"]',
+            '$radioResizeMethod': '[name="type[method]"]',
 
             '$radioFormat' : 'input[name="type[format]"]',
             '$inputQuality': '#type-quality',
