@@ -33,7 +33,7 @@ module.exports = function(hoodie) {
                 {
                     id     : 'E1cnGYY41cIVtF',
                     name   : 'thumb',
-                    size   : [150, 150],
+                    resize : [150, 150],
                     method : 'cover',
                     format : 'jpg',
                     quality: 90
@@ -41,7 +41,7 @@ module.exports = function(hoodie) {
                 {
                     id     : 'VkHcbtFVJQfZtF',
                     name   : 'detail',
-                    size   : [500, 500],
+                    resize : [500, 500],
                     method : 'contain',
                     format : 'jpg',
                     quality: 85
