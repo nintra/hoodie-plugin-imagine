@@ -9,10 +9,8 @@ define(function(require) {
 
         defaults: function() {
             return {
-                name  : '',
-                public: false,
-                verify: 'after',
-                types : []
+                name : '',
+                types: []
             };
         },
 

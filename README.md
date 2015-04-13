@@ -5,8 +5,6 @@ Imagine is a [hoodie](//hood.ie) plugin for handling image uploads. This is a fu
 ## features
 - resizes images client-side to reduce traffic and server processing time
 - uploads images when a connection to the server is established: offline first
-- images may be public or private
-- verify images in the backend (pre- or post-verification)
 - create image groups and types to manage images
 - automated cropping & resizing
 - jpg & png images supported
@@ -19,7 +17,7 @@ Imagine is a [hoodie](//hood.ie) plugin for handling image uploads. This is a fu
 
 
 ## API
-All plugin methods are returning promises. Also `.add` and `.update` call a progress as soon as an image is resized client-side.
+All methods except `.find` are returning promises. Also `.add` and `.update` call a progress as soon as an image is resized client-side.
 ```javascript
 // uploads an image and returns a image object
 hoodie.imagine.add(group, dataUrl);
@@ -27,7 +25,7 @@ hoodie.imagine.add(group, dataUrl);
 // update the image referenced by id
 hoodie.imagine.update(id, group, dataUrl);
 
-// find a images by an id or an array of ids
+// find an image by an id or an array of ids, returns an image object
 hoodie.imagine.find(id);
 
 // find images of current user
@@ -117,4 +115,5 @@ $('#file-input').on('change', handleFileSelect);
 
 
 ## release history
+- 0.2.0 remove verification, simplify image retrieval
 - 0.1.0 initial release

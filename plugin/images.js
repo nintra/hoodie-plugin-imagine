@@ -12,9 +12,9 @@ module.exports = function(config) {
 
 
 
-    // concats basePath and fileId
-    function getFolderPath(fileId) {
-        return config.basePath + '/' + fileId;
+    // concats basePath and id
+    function getFolderPath(id) {
+        return config.basePath + '/' + id;
     }
 
 
@@ -41,8 +41,8 @@ module.exports = function(config) {
 
 
     // save resized images into a folder
-    function saveImageFile(fileId, groupId, imageData, callback) {
-        var path  = getFolderPath(fileId),
+    function saveImageFile(id, groupId, imageData, callback) {
+        var path  = getFolderPath(id),
 
             group = _.find(config.groups, { id: groupId }),
             types = _.filter(config.types, function(type) {
@@ -68,7 +68,6 @@ module.exports = function(config) {
 
             // load image
             var image = gm(imageData.buffer, 'image.'+imageData.format);
-            // image = image.autoOrient();
 
             image.size(function(error, imageSize) {
                 if (error) {
@@ -88,9 +87,8 @@ module.exports = function(config) {
                 _.each(types, function(type) {
                     var image = gm(imageData.buffer, 'image.'+imageData.format),
                         fileFormat = imageData.format,
-                        fileName   = type.id;
+                        fileName   = type.name;
 
-                    // image = image.autoOrient();
 
                     if (type.format) {
                         image = image.setFormat(type.format);
@@ -177,8 +175,8 @@ module.exports = function(config) {
 
 
     // deletes image folder
-    function deleteImageFile(fileId, callback) {
-        var path = getFolderPath(fileId);
+    function deleteImageFile(id, callback) {
+        var path = getFolderPath(id);
 
         fse.remove(path, callback);
     }

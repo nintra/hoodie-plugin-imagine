@@ -9,11 +9,8 @@ define(function(require) {
 
         defaults: function() {
             return {
-                fileId      : '',
-                groupId     : '',
-                sourceFormat: '',
-                user        : '',
-                verified    : ''
+                groupId: '',
+                user   : ''
             };
         },
 

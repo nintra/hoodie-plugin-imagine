@@ -190,7 +190,7 @@ define(function(require) {
                 ];
             }
 
-            data.format  = data.format || false;
+            // data.format  = data.format || false;
             data.quality = parseInt(data.quality, 10);
 
 

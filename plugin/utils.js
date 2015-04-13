@@ -105,7 +105,7 @@ Utils.prototype.validateData = function(keys, data) {
 
 //
 Utils.prototype.generateId = function() {
-    return shortid.generate();
+    return shortid.generate() + shortid.generate();
 };
 
 
@@ -116,7 +116,7 @@ Utils.prototype.prepareImageData = function(settings) {
         group = _.find(self.config.groups, { name: settings.group }),
 
         data = {
-            fileId: settings.fileId,
+            // fileId: settings.fileId,
             user  : settings.user
         };
 
@@ -125,7 +125,7 @@ Utils.prototype.prepareImageData = function(settings) {
     }
 
     data.groupId  = group.id;
-    data.verified = !!['before', 'after'].indexOf(group.verify);
+    // data.verified = !!['before', 'after'].indexOf(group.verify);
 
     return data;
 };

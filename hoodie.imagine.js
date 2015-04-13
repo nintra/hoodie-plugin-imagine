@@ -21,25 +21,16 @@ Hoodie.extend(function(hoodie, lib, utils) {
 
 
         // build image url
-        function getImageUrl(fileId, type, srcFormat) {
-            return hoodie.baseUrl + config.general.basePath + '/' + fileId + '/' + type.id + '.' + (type.format || srcFormat);
+        function getImageUrl(id, type, srcFormat) {
+            return hoodie.baseUrl + config.general.basePath + '/' + id + '/' + type.name + '.' + type.format;
         }
 
 
 
         // create a image object for the client
-        function buildObject(imageData) {
-            var group, i;
-
-            for(i=0; i < config.groups.length; i++) {
-                if (config.groups[i].id === imageData.groupId) {
-                    group = config.groups[i];
-                    break;
-                }
-            }
-
+        function buildObject(id) {
             return {
-                id : imageData.id,
+                id : id,
                 url: function(typeName) {
                     var type, i;
 
@@ -50,11 +41,11 @@ Hoodie.extend(function(hoodie, lib, utils) {
                         }
                     }
 
-                    if (!type || group.types.indexOf(type.id) === -1) {
+                    if (!type) {
                         return false;
                     }
 
-                    return getImageUrl(imageData.fileId, type, imageData.sourceFormat);
+                    return getImageUrl(id, type);
                 }
             };
         }
@@ -192,17 +183,28 @@ Hoodie.extend(function(hoodie, lib, utils) {
                     };
 
                     hoodie.task.start('imagine', settings)
-                        .done(function(image) {
-                            defer.resolve(buildObject(image.imageData));
+                        .done(function(request) {
+                            defer.resolve(buildObject(request.imageData.id));
                         })
                         .fail(defer.reject);
                 };
 
 
-            if (opts.method === 'set' && !opts.id) {
-                defer.reject(new Error('´id´ property missing'));
+            if (!opts.id) {
+                if (opts.method === 'update') {
 
-            }else if (opts.imageData.substr(0,5) !== 'data:') {
+                    defer.reject(new Error('´id´ property missing'));
+                    return defer.promise;
+
+                } else {
+
+                    opts.id = utils.generateId() + utils.generateId();
+
+                }
+            }
+
+
+            if (opts.imageData.substr(0,5) !== 'data:') {
                 defer.reject(new Error('invalid data-url'));
 
             } else {
@@ -243,7 +245,6 @@ Hoodie.extend(function(hoodie, lib, utils) {
         function addImage(group, imageData, options) {
             return updateCreateImage({
                 method   : 'add',
-                id       : utils.generateId(),
                 group    : group,
                 imageData: imageData,
                 options  : options
@@ -267,46 +268,20 @@ Hoodie.extend(function(hoodie, lib, utils) {
 
         // get image by id
         function findImages(ids) {
-            var defer    = utils.promise.defer(),
-                request  = { method: 'find' };
-
-            if (!ids) {
-                defer.reject(new Error('´ids´ parameter missing'));
-            }
-
+            var i, objects = {};
 
             if (typeof(ids) === 'object' && ids.constructor === Array) {
-                request.objectIds = ids;
+                for(i = ids.length-1; i > -1; i--) {
+                    objects[ids[i]] = buildObject(ids[i]);
+                }
+                return objects;
 
             } else if (typeof(ids) === 'string') {
-                request.objectIds = [ids];
+                return buildObject(ids);
 
             } else {
-                defer.reject(new Error('´ids´ parameter must be string or array'));
+                throw new Error('´ids´ parameter must be string or array');
             }
-
-
-            hoodie.task.start('imagine', request)
-                .done(function(request) {
-                    var images = request.imageData,
-                        i, objects = {};
-
-                    if (ids.constructor === Array) { // expected multiple
-
-                        for(i = images.length-1; i > -1; i--) {
-                            objects[images[i].id] = buildObject(images[i]);
-                        }
-
-                        defer.resolve(objects);
-
-                    } else {
-                        defer.resolve(buildObject(images[0]));
-                    }
-
-                })
-                .fail(defer.reject);
-
-            return defer.promise;
         }
 
 
@@ -326,7 +301,7 @@ Hoodie.extend(function(hoodie, lib, utils) {
                         i, objects = {};
 
                     for(i = images.length-1; i > -1; i--) {
-                        objects[images[i].id] = buildObject(images[i]);
+                        objects[images[i].id] = buildObject(images[i].id);
                     }
 
                     defer.resolve(objects);
@@ -339,12 +314,20 @@ Hoodie.extend(function(hoodie, lib, utils) {
 
 
         // remove image by id
-        function removeImage(id) {
+        function removeImage(ids) {
             var defer = utils.promise.defer();
 
+            if (typeof(ids) === 'string') {
+                ids = [ids];
+            } else if (typeof(ids) === 'object' && ids.constructor === Array) {
+
+            } else {
+                defer.reject(new Error('´ids´ parameter must be string or array'));
+            }
+
             hoodie.task.start('imagine', {
-                    method  : 'remove',
-                    objectId: id
+                    method   : 'remove',
+                    objectIds: ids
                 })
                 .done(defer.resolve)
                 .fail(defer.reject);

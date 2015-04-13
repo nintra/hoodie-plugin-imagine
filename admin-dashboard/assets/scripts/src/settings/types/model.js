@@ -12,7 +12,7 @@ define(function(require) {
                 name   : '',
                 resize : false,
                 method : 'contain',
-                format : false,
+                format : 'jpg',
                 quality: 90,
                 filters: []
             };

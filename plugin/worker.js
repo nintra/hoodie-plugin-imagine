@@ -75,9 +75,7 @@ module.exports = function(hoodie, callback) {
         }
 
 
-        var fileId    = self.utils.generateId(),
-            imageData = self.utils.prepareImageData({
-                fileId : fileId,
+        var imageData = self.utils.prepareImageData({
                 user   : self.request.user,
                 group  : taskData.group,
                 options: taskData.options
@@ -87,13 +85,13 @@ module.exports = function(hoodie, callback) {
             return self.request.error(imageData);
         }
 
-        self.imageHandler.saveFile(fileId, imageData.groupId, taskData.data, function(error, processedData) {
+        self.imageHandler.saveFile(taskData.objectId, imageData.groupId, taskData.data, function(error, processedData) {
             if (error) {
                 return self.request.error(error);
             }
 
 
-            imageData.sourceFormat = processedData.sourceFormat;
+            // imageData.sourceFormat = processedData.sourceFormat;
             imageData.id = taskData.objectId;
 
             database.add('image', imageData, function(error, image) {
@@ -101,7 +99,7 @@ module.exports = function(hoodie, callback) {
                     return self.request.error(error);
                 }
 
-                self.request.success(imageData);
+                self.request.success({ id: taskData.objectId });
             });
 
         });
@@ -121,14 +119,12 @@ module.exports = function(hoodie, callback) {
 
         self.accessImageDocument(taskData.objectId, function(image) {
 
-            self.imageHandler.deleteFile(image.fileId, function(error) {
+            self.imageHandler.deleteFile(image.id, function(error) {
                 if (error) {
                     return self.request.error(error);
                 }
 
-                var newFileId = self.utils.generateId(),
-                    imageData = self.utils.prepareImageData({
-                        fileId : newFileId,
+                var imageData = self.utils.prepareImageData({
                         user   : self.request.user,
                         group  : taskData.group || _.find(self.config.groups, { id: image.groupId }),
                         options: taskData.options//_.extend(image, taskData.options)
@@ -138,20 +134,20 @@ module.exports = function(hoodie, callback) {
                     return self.request.error(imageData);
                 }
 
-                self.imageHandler.saveFile(newFileId, imageData.groupId, taskData.data, function(error, processedData) {
+                self.imageHandler.saveFile(image.id, imageData.groupId, taskData.data, function(error, processedData) {
                     if (error) {
                         return self.request.error(error);
                     }
 
 
-                    imageData.sourceFormat = processedData.sourceFormat;
+                    // imageData.sourceFormat = processedData.sourceFormat;
 
                     database.update('image', image.id, imageData, function(error) {
                         if (error) {
                             return self.request.error(error);
                         }
 
-                        self.request.success(imageData);
+                        self.request.success({ id: image.id });
                     });
 
                 });
@@ -161,7 +157,7 @@ module.exports = function(hoodie, callback) {
 
 
 
-    // retrieves verified public images
+    // retrieves images
     Imagine.prototype.find = function(taskData) {
         var self   = this,
             result = self.utils.validateData(['objectIds'], taskData);
@@ -181,13 +177,13 @@ module.exports = function(hoodie, callback) {
                     return self.request.error(error);
                 }
 
-                results = _.filter(results, function(result) {
+                /*results = _.filter(results, function(result) {
                     var doc   = result.doc,
                         group = _.find(self.config.groups, { id: doc.groupId });
 
                     // all public and verified images and images created by current user
                     return (group.public && doc.verified) || doc.user === self.request.user;
-                });
+                });*/
 
                 self.request.success(self.utils.preparePublicImageData(results));
             }
@@ -235,27 +231,50 @@ module.exports = function(hoodie, callback) {
     // deletes an image
     Imagine.prototype.remove = function(taskData) {
         var self   = this,
-            result = self.utils.validateData(['objectId'], taskData);
+            result = self.utils.validateData(['objectIds'], taskData),
+
+            finish = (function() {
+                var count  = taskData.objectIds.length,
+                    errors = [];
+
+                return function(id, error) {
+                    if (error) {
+                        errors.push({ id: id, error: error });
+                    }
+
+                    count--;
+                    if (count === 0) {
+                        if (errors.length) {
+                            self.request.error(errors);
+                        } else {
+                            self.request.success();
+                        }
+                    }
+                };
+            })();
 
         if (!result.valid) {
             return self.request.error(result);
         }
 
+        _.each(taskData.objectIds, function(id) {
 
-        self.accessImageDocument(taskData.objectId, function(image) {
+            self.accessImageDocument(id, function(image) {
 
-            database.remove('image', taskData.objectId, function(error) {
-                if (error) {
-                    return self.request.error(error);
-                }
-
-                self.imageHandler.deleteFile(image.fileId, function(error) {
+                database.remove('image', id, function(error) {
                     if (error) {
-                        return self.request.error(error);
+                        return finish(id, error);
                     }
 
-                    self.request.success();
+                    self.imageHandler.deleteFile(id, function(error) {
+                        if (error) {
+                            return finish(id, error);
+                        }
+
+                        finish(id, false);
+                    });
                 });
+
             });
 
         });
@@ -330,7 +349,7 @@ module.exports = function(hoodie, callback) {
                         var doc = result.doc,
                             id  = doc._id.replace('image/', '');
 
-                        self.imageHandler.deleteFile(doc.fileId, function(error) {
+                        self.imageHandler.deleteFile(id, function(error) {
                             if (error) {
                                 return callback(error);
                             }

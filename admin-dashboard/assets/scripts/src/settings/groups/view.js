@@ -15,9 +15,9 @@ define(function(require) {
         ui: {
             '$selectGroup'   : '#group',
             '$inputName'     : '#group-name',
-            '$checkboxPublic': '#group-public',
-            '$radioVerifyBefore': '#group-verify-before',
-            '$radioVerifyAfter' : '#group-verify-after',
+            // '$checkboxPublic': '#group-public',
+            // '$radioVerifyBefore': '#group-verify-before',
+            // '$radioVerifyAfter' : '#group-verify-after',
             '$selectTypes'   : '#group-types',
             '$error': '.error'
         },
@@ -202,13 +202,13 @@ define(function(require) {
 
 
             view.ui.$inputName.val(model.get('name'));
-            view.ui.$checkboxPublic.iCheck(model.get('public') ? 'check' : 'uncheck');
+            // view.ui.$checkboxPublic.iCheck(model.get('public') ? 'check' : 'uncheck');
 
-            if (model.get('verify') === 'before') {
-                view.ui.$radioVerifyBefore.iCheck('check');
-            } else {
-                view.ui.$radioVerifyAfter.iCheck('check');
-            }
+            // if (model.get('verify') === 'before') {
+            //     view.ui.$radioVerifyBefore.iCheck('check');
+            // } else {
+            //     view.ui.$radioVerifyAfter.iCheck('check');
+            // }
 
             view.ui.$selectTypes.select2('val', model.get('types'));
 
