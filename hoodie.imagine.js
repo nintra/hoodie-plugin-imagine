@@ -191,16 +191,8 @@ Hoodie.extend(function(hoodie, lib, utils) {
 
 
             if (!opts.id) {
-                if (opts.method === 'update') {
-
-                    defer.reject(new Error('´id´ property missing'));
-                    return defer.promise;
-
-                } else {
-
-                    opts.id = utils.generateId() + utils.generateId();
-
-                }
+                defer.reject(new Error('´id´ property missing'));
+                return defer.promise;
             }
 
 
@@ -242,9 +234,18 @@ Hoodie.extend(function(hoodie, lib, utils) {
 
 
         // add image and return image id
-        function addImage(group, imageData, options) {
+        // id and options parameters are optional
+        function addImage(id, group, imageData, options) {
+            if (typeof(arguments[1]) === 'object' && arguments[1].constructor !== Array) {
+                id        = utils.generateId() + utils.generateId();
+                options   = imageData;
+                imageData = group;
+                group     = id;
+            }
+
             return updateCreateImage({
                 method   : 'add',
+                id       : id,
                 group    : group,
                 imageData: imageData,
                 options  : options
