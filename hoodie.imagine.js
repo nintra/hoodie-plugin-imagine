@@ -133,7 +133,11 @@ Hoodie.extend(function(hoodie, lib, utils) {
                 if (image.width < opts.size.width && image.height < opts.size.height) {
 
                     // resizing superfluous
-                    defer.resolve(opts.dataUrl);
+                    defer.resolve({
+                        dataUrl: opts.dataUrl,
+                        width  : image.width,
+                        height : image.height
+                    });
 
                 } else {
 
@@ -151,7 +155,11 @@ Hoodie.extend(function(hoodie, lib, utils) {
                     if (typeof(canvas) === 'string'){
                         defer.reject(new Error(canvas));
                     } else {
-                        defer.resolve(canvas.toDataURL(mimeType));
+                        defer.resolve({
+                            dataUrl: canvas.toDataURL(mimeType),
+                            width  : canvas.width,
+                            height : canvas.height
+                        });
                     }
 
                 }
@@ -210,15 +218,17 @@ Hoodie.extend(function(hoodie, lib, utils) {
                                 height: config.general.clientResize[1]
                             }
                         })
-                        .done(function(dataUrl) {
+                        .done(function(data) {
 
                             // notify that resizing finished
                             defer.notify({
                                 id     : opts.id,
-                                dataUrl: dataUrl
+                                dataUrl: data.dataUrl,
+                                width  : data.width,
+                                height : data.height
                             });
 
-                            createTask(dataUrl);
+                            createTask(data.dataUrl);
                         })
                         .fail(defer.reject);
 
