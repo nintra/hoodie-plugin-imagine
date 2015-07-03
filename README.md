@@ -17,16 +17,13 @@ Imagine is a [hoodie](//hood.ie) plugin for handling image uploads. This is a fu
 
 
 ## API
-All methods except `.find` are returning promises. Also `.add` and `.update` call a progress as soon as an image is resized client-side.
+All methods except `.get` are returning promises. Also `.add`, `.update` and `.upsert` call a progress as soon as an image is resized client-side.
 ```javascript
 // uploads an image and returns a image object
-hoodie.imagine.add(group, dataUrl);
-
-// update the image referenced by id
-hoodie.imagine.update(id, group, dataUrl);
+hoodie.imagine.upsert(group, dataUrl);
 
 // find an image by an id or an array of ids, returns an image object
-hoodie.imagine.find(id);
+hoodie.imagine.get(id);
 
 // find images of current user
 // you can also filter the images by group
@@ -41,6 +38,8 @@ hoodie.imagine.removeOwn([group]);
 // a preview image will be returned by a progress call (.add and .update only)
 previewImage.id; // final id of the image, keep it for later ;)
 previewImage.dataUrl; // dataUrl of resized image
+previewImage.width; // dataUrl of resized image
+previewImage.height; // dataUrl of resized image
 
 // an image object has an id property and a url method. 
 image.id;
