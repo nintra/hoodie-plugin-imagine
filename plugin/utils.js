@@ -23,8 +23,7 @@ Utils.prototype.validationRules = function(keys) {
                 required: true,
                 type: 'string',
                 enum: [
-                    'add',
-                    'update',
+                    'upsert',
                     'find',
                     'findOwn',
                     'remove',

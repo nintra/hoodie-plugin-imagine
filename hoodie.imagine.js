@@ -245,7 +245,7 @@ Hoodie.extend(function(hoodie, lib, utils) {
 
         // add image and return image id
         // id and options parameters are optional
-        function addImage(id, group, imageData, options) {
+        function upsertImage(id, group, imageData, options) {
             if (typeof(arguments[1]) === 'object' && arguments[1].constructor !== Array) {
                 id        = utils.generateId() + utils.generateId();
                 options   = imageData;
@@ -254,20 +254,7 @@ Hoodie.extend(function(hoodie, lib, utils) {
             }
 
             return updateCreateImage({
-                method   : 'add',
-                id       : id,
-                group    : group,
-                imageData: imageData,
-                options  : options
-            });
-        }
-
-
-
-        // update imageData for image with id
-        function updateImage(id, group, imageData, options) {
-            return updateCreateImage({
-                method   : 'update',
+                method   : 'upsert',
                 id       : id,
                 group    : group,
                 imageData: imageData,
@@ -278,7 +265,7 @@ Hoodie.extend(function(hoodie, lib, utils) {
 
 
         // get image by id
-        function findImages(ids) {
+        function getImages(ids) {
             var i, objects = {};
 
             if (typeof(ids) === 'object' && ids.constructor === Array) {
@@ -367,9 +354,10 @@ Hoodie.extend(function(hoodie, lib, utils) {
 
 
         return {
-            add      : addImage,
-            update   : updateImage,
-            find     : findImages,
+            add      : upsertImage,
+            update   : upsertImage,
+            upsert   : upsertImage,
+            get      : getImages,
             findOwn  : findOwnImages,
             remove   : removeImage,
             removeOwn: removeOwnImages

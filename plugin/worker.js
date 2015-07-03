@@ -51,7 +51,11 @@ module.exports = function(hoodie, callback) {
 
         database.find('image', id, function(error, image) {
             if (error) {
-                return self.request.error(error);
+                if (error.error === 'not_found') {
+                    callback(false);
+                } else {
+                    return self.request.error(error);
+                }
             }
 
             if (image.user !== self.request.user) {
@@ -65,52 +69,45 @@ module.exports = function(hoodie, callback) {
 
 
 
-    // adds an image and returns an image object
-    Imagine.prototype.add = function(taskData) {
+    // adds or updates an image and returns an image object
+    Imagine.prototype.upsert = function(taskData) {
         var self   = this,
-            result = self.utils.validateData(['objectId', 'data', 'group', 'options'], taskData);
+            result = self.utils.validateData(['objectId', 'data', 'group', 'options'], taskData),
 
-        if (!result.valid) {
-            return self.request.error(result);
-        }
+            deleteFile = function(imageId, callback) {
+                self.imageHandler.deleteFile(imageId, function(error) {
+                    if (error) {
+                        return self.request.error(error);
+                    }
 
+                    callback();
+                });
+            },
 
-        var imageData = self.utils.prepareImageData({
-                user   : self.request.user,
-                group  : taskData.group,
-                options: taskData.options
-            });
+            saveFile = function(image, callback) {
+                var group = taskData.group || (image ? _.find(self.config.groups, { id: image.groupId }) : false),
 
-        if (_.isString(imageData)) {
-            return self.request.error(imageData);
-        }
+                    imageData = self.utils.prepareImageData({
+                        user   : self.request.user,
+                        group  : group,
+                        options: taskData.options
+                    }),
 
-        self.imageHandler.saveFile(taskData.objectId, imageData.groupId, taskData.data, function(error, processedData) {
-            if (error) {
-                return self.request.error(error);
-            }
+                    imageId = image ? image.id : taskData.objectId;
 
-
-            // imageData.sourceFormat = processedData.sourceFormat;
-            imageData.id = taskData.objectId;
-
-            database.add('image', imageData, function(error, image) {
-                if (error) {
-                    return self.request.error(error);
+                if (_.isString(imageData)) {
+                    return self.request.error(imageData);
                 }
 
-                self.request.success({ id: taskData.objectId });
-            });
+                self.imageHandler.saveFile(imageId, imageData.groupId, taskData.data, function(error, processedData) {
+                    if (error) {
+                        return self.request.error(error);
+                    }
 
-        });
-    };
+                    callback(imageId, imageData);
+                });
+            };
 
-
-
-    // updates an image and returns an image object
-    Imagine.prototype.update = function(taskData) {
-        var self   = this,
-            result = self.utils.validateData(['objectId', 'data', 'group', 'options'], taskData);
 
         if (!result.valid) {
             return self.request.error(result);
@@ -119,39 +116,39 @@ module.exports = function(hoodie, callback) {
 
         self.accessImageDocument(taskData.objectId, function(image) {
 
-            self.imageHandler.deleteFile(image.id, function(error) {
-                if (error) {
-                    return self.request.error(error);
-                }
+            if (image) {
+                // exists and is owner
 
-                var imageData = self.utils.prepareImageData({
-                        user   : self.request.user,
-                        group  : taskData.group || _.find(self.config.groups, { id: image.groupId }),
-                        options: taskData.options//_.extend(image, taskData.options)
+                deleteFile(image.id, function() {
+                    saveFile(image, function(imageId, imageData) {
+
+                        database.update('image', imageId, imageData, function(error) {
+                            if (error) {
+                                return self.request.error(error);
+                            }
+
+                            self.request.success({ id: imageId });
+                        });
+
                     });
+                });
 
-                if (_.isString(imageData)) {
-                    return self.request.error(imageData);
-                }
+            } else {
+                // image not found
 
-                self.imageHandler.saveFile(image.id, imageData.groupId, taskData.data, function(error, processedData) {
-                    if (error) {
-                        return self.request.error(error);
-                    }
+                saveFile(false, function(imageId, imageData) {
+                    imageData.id = imageId;
 
-
-                    // imageData.sourceFormat = processedData.sourceFormat;
-
-                    database.update('image', image.id, imageData, function(error) {
+                    database.add('image', imageData, function(error, image) {
                         if (error) {
                             return self.request.error(error);
                         }
 
-                        self.request.success({ id: image.id });
+                        self.request.success({ id: imageId });
                     });
-
                 });
-            });
+            }
+
         });
     };
 
