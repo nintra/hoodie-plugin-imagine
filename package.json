@@ -1,6 +1,6 @@
 {
   "name": "hoodie-plugin-imagine",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Hoodie plugin for handling images",
   "devDependencies": {
     "mocha": "~1.17.1",
