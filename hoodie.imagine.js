@@ -246,11 +246,12 @@ Hoodie.extend(function(hoodie, lib, utils) {
         // add image and return image id
         // id and options parameters are optional
         function upsertImage(id, group, imageData, options) {
-            if (typeof(arguments[1]) === 'object' && arguments[1].constructor !== Array) {
-                id        = utils.generateId() + utils.generateId();
+            // when no id provided
+            if (arguments.length === 2 || arguments.length === 3 && typeof(arguments[2]) === 'object' && arguments[2].constructor !== Array) {
                 options   = imageData;
                 imageData = group;
                 group     = id;
+                id        = utils.generateId() + utils.generateId();
             }
 
             return updateCreateImage({

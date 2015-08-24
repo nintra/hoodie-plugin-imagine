@@ -22,6 +22,9 @@ All methods except `.get` are returning promises. Also `.add`, `.update` and `.u
 // uploads an image and returns a image object
 hoodie.imagine.upsert(group, dataUrl);
 
+hoodie.imagine.add(group, dataUrl);
+hoodie.imagine.update(id, group, dataUrl);
+
 // find an image by an id or an array of ids, returns an image object
 hoodie.imagine.get(id);
 

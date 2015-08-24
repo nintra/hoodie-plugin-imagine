@@ -53,6 +53,8 @@ module.exports = function(hoodie, callback) {
             if (error) {
                 if (error.error === 'not_found') {
                     callback(false);
+                    return;
+
                 } else {
                     return self.request.error(error);
                 }
