@@ -6,6 +6,7 @@ Hoodie.extend(function(hoodie, lib, utils) {
 
 
     var imagine = (function() {
+        var uploadUrl = '/_plugins/imagine/_api/image-upload';
 
 
         if (!config ||
@@ -182,17 +183,20 @@ Hoodie.extend(function(hoodie, lib, utils) {
             var defer = utils.promise.defer(),
 
                 createTask = function(dataUrl) {
-                    var settings = {
-                        method  : opts.method,
-                        objectId: opts.id,
-                        group   : opts.group,
-                        data    : dataUrl,
-                        options : opts.options
-                    };
 
-                    hoodie.task.start('imagine', settings)
+                    hoodie
+                        .request('POST', uploadUrl, {
+                            data: {
+                                userId  : hoodie.id(),
+                                method  : opts.method,
+                                objectId: opts.id,
+                                group   : opts.group,
+                                data    : dataUrl,
+                                options : opts.options
+                            }
+                        })
                         .done(function(request) {
-                            defer.resolve(buildObject(request.imageData.id));
+                            defer.resolve(buildObject(request.id));
                         })
                         .fail(defer.reject);
                 };
@@ -288,16 +292,19 @@ Hoodie.extend(function(hoodie, lib, utils) {
         // get images by current user
         function findOwnImages(group) {
             var defer     = utils.promise.defer(),
-                settings  = { method: 'findOwn' };
+                settings  = { userId: hoodie.id(), method: 'findOwn' };
 
             if (group) {
                 settings.group = group;
             }
 
-            hoodie.task.start('imagine', settings)
-                .done(function(request) {
-                    var images = request.imageData,
-                        i, objects = {};
+
+            hoodie
+                .request('POST', uploadUrl, {
+                    data: settings
+                })
+                .done(function(images) {
+                    var i, objects = {};
 
                     for(i = images.length-1; i > -1; i--) {
                         objects[images[i].id] = buildObject(images[i].id);
@@ -306,6 +313,7 @@ Hoodie.extend(function(hoodie, lib, utils) {
                     defer.resolve(objects);
                 })
                 .fail(defer.reject);
+
 
             return defer.promise;
         }
@@ -324,9 +332,13 @@ Hoodie.extend(function(hoodie, lib, utils) {
                 defer.reject(new Error('´ids´ parameter must be string or array'));
             }
 
-            hoodie.task.start('imagine', {
-                    method   : 'remove',
-                    objectIds: ids
+            hoodie
+                .request('POST', uploadUrl, {
+                    data: {
+                        userId   : hoodie.id(),
+                        method   : 'remove',
+                        objectIds: ids
+                    }
                 })
                 .done(defer.resolve)
                 .fail(defer.reject);
@@ -339,13 +351,16 @@ Hoodie.extend(function(hoodie, lib, utils) {
         // remove images by current user
         function removeOwnImages(group) {
             var defer    = utils.promise.defer(),
-                settings = { method: 'removeOwn' };
+                settings = { userId: hoodie.id(), method: 'removeOwn' };
 
             if (group) {
                 settings.group = group;
             }
 
-            hoodie.task.start('imagine', settings)
+            hoodie
+                .request('POST', uploadUrl, {
+                    data: settings
+                })
                 .done(defer.resolve)
                 .fail(defer.reject);
 

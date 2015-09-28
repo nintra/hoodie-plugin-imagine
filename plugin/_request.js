@@ -2,22 +2,21 @@
 
 
 var fs = require('fs'),
-    _  = require('lodash'),
-    when = require('when');
+    _  = require('lodash');
 
 
 
 module.exports = function(hoodie) {
 
 
-    function Request(user, data, utils) {
+
+    function Request(dbName, task, utils) {
         var self = this;
 
-        self.defer = when.defer();
         self.utils = utils;
-        self.data  = data;
-        self.user  = user;
-        self.userDbName = 'user/' + user;
+        self.task = task;
+        self.user = dbName.replace('user/', '');
+        self.userDbName = dbName;
     }
 
 
@@ -37,10 +36,12 @@ module.exports = function(hoodie) {
             message = error;
 
         } else if (_.isObject(error) && error.reason) {
-            message = error.error + ': ' + error.reason;
+            message = error.reason;
+
         }
 
-        self.defer.reject(message);
+        // console.error(message);
+        return hoodie.task.error(self.userDbName, self.task, message);
     };
 
 
@@ -48,7 +49,13 @@ module.exports = function(hoodie) {
     // send success message, append custom data
     Request.prototype.success = function(data) {
         var self = this;
-        self.defer.resolve(data);
+
+        self.task.imageData = data;
+        hoodie.task.success(self.userDbName, self.task, function(error) {
+            if (error) {
+                console.error('failure on task success', error.reason);
+            }
+        });
     };
 
 
@@ -56,19 +63,19 @@ module.exports = function(hoodie) {
     // checks 'method' of request and delegates
     Request.prototype.process = function(callback) {
         var self = this,
-            data   = _.pick(self.data, ['method', 'objectId', 'objectIds', 'group', 'data', 'options']),
+            data   = _.pick(self.task, ['method', 'objectId', 'objectIds', 'group', 'data', 'options']),
             result = self.utils.validateData(['method'], data);
 
         if (!result.valid) {
             return self.error(result);
         }
 
-        callback(self.data.method, data, self);
+        callback(self.task.method, data, self);
     };
 
 
-    return function(user, data, utils) {
-        return new Request(user, data, utils);
+    return function(dbName, task, utils) {
+        return new Request(dbName, task, utils);
     };
 
 };

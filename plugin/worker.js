@@ -29,6 +29,7 @@ var _ = require('lodash'),
 
 
 module.exports = function(hoodie, callback) {
+
     var database,
         createRequest = initRequest(hoodie);
 
@@ -244,7 +245,7 @@ module.exports = function(hoodie, callback) {
                     count--;
                     if (count === 0) {
                         if (errors.length) {
-                            self.request.error(errors);
+                            self.request.error(errors[errors.length - 1].error);
                         } else {
                             self.request.success();
                         }
@@ -252,9 +253,11 @@ module.exports = function(hoodie, callback) {
                 };
             })();
 
+
         if (!result.valid) {
             return self.request.error(result);
         }
+
 
         _.each(taskData.objectIds, function(id) {
 
@@ -388,9 +391,11 @@ module.exports = function(hoodie, callback) {
 
         database = pluginDatabase;
 
+        hoodie.Imagine = Imagine;
+
 
         // the only contact to the outside
-        hoodie.task.on('imagine:add', function(dbName, task) {
+        /*hoodie.task.on('imagine:add', function(dbName, task) {
 
             var config  = getConfig(hoodie),
                 utils   = createUtils(config),
@@ -407,7 +412,7 @@ module.exports = function(hoodie, callback) {
                 imagine[method](data);
             });
 
-        });
+        });*/
 
 
         // everything is fine

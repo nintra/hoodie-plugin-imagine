@@ -89,7 +89,6 @@ module.exports = function(config) {
                         fileFormat = imageData.format,
                         fileName   = type.name;
 
-
                     if (type.format) {
                         image = image.setFormat(type.format);
                         fileFormat = type.format;
@@ -154,7 +153,6 @@ module.exports = function(config) {
                             image = image[filter.command].apply(image, filter.arguments);
                         });
                     }
-
 
 
                     image.write(path + '/' + fileName, function(error) {
