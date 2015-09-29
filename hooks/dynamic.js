@@ -14,26 +14,27 @@ module.exports = function(hoodie) {
 
         // /_api/_plugins/imagine/_api
         'server.api.plugin-request': function(request, reply) {
-            var data;
+            var data, config, utils,
+                requestHandler, imagine;
 
-            if (!request.state.AuthSession) {
-                return reply('unauthorized');
-            }
+            // if (!request.state.AuthSession) {
+            //     return reply('unauthorized');
+            // }
 
             // only allow post requests to /image-upload
             if (request.params.p === 'image-upload' && request.method === 'post') {
-                data = request.payload;
 
-                var config  = getConfig(hoodie),
-                    utils   = createUtils(config),
-                    requestHandler = createRequest(data.userId, data, utils),
+                data   = request.payload;
+                config = getConfig(hoodie);
+                utils  = createUtils(config);
+                requestHandler = createRequest(data.userId, data, utils);
 
-                    imagine = new hoodie.Imagine({
-                        config      : config,
-                        utils       : utils,
-                        imageHandler: createImageHandler(config),
-                        request     : requestHandler
-                    });
+                imagine = new hoodie.Imagine({
+                    config      : config,
+                    utils       : utils,
+                    imageHandler: createImageHandler(config),
+                    request     : requestHandler
+                });
 
                 requestHandler.process(function(method, data) {
                     imagine[method](data);
