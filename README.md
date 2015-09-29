@@ -63,7 +63,9 @@ function handleFile(file) {
 
         hoodie.imagine.add('profile', 'data:image/png;base64,...')
             .progress(function(image) {
-                // image id and resized image is ready                
+                // image id and resized image is ready    
+                // image properties: id, dataUrl, width, height, canvas
+                            
                 // show preview image
                 $('img.profile-picture').attr('src', image.dataUrl);
             })

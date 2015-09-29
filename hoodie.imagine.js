@@ -159,7 +159,8 @@ Hoodie.extend(function(hoodie, lib, utils) {
                         defer.resolve({
                             dataUrl: canvas.toDataURL(mimeType),
                             width  : canvas.width,
-                            height : canvas.height
+                            height : canvas.height,
+                            canvas : canvas
                         });
                     }
 
@@ -229,7 +230,8 @@ Hoodie.extend(function(hoodie, lib, utils) {
                                 id     : opts.id,
                                 dataUrl: data.dataUrl,
                                 width  : data.width,
-                                height : data.height
+                                height : data.height,
+                                canvas : data.canvas
                             });
 
                             createTask(data.dataUrl);
