@@ -132,12 +132,25 @@ Hoodie.extend(function(hoodie, lib, utils) {
 
 
                 if (image.width < opts.size.width && image.height < opts.size.height) {
-
                     // resizing superfluous
+
+
+                    // create canvas with image
+                    canvas = document.createElement('canvas');
+
+                    if (!canvas || !canvas.getContext){
+                        return defer.reject(new Error('canvas not supported!'));
+                    }
+
+                    canvas.width  = image.width;
+                    canvas.height = image.height;
+                    canvas.getContext('2d').drawImage(image, 0, 0, image.width, image.height);
+
                     defer.resolve({
                         dataUrl: opts.dataUrl,
                         width  : image.width,
-                        height : image.height
+                        height : image.height,
+                        canvas : canvas
                     });
 
                 } else {
