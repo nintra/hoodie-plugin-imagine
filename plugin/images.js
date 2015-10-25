@@ -65,6 +65,8 @@ module.exports = function(config) {
                 return callback(error);
             }
 
+            fs.chmodSync(path, '755');
+
 
             // load image
             var image = gm(imageData.buffer, 'image.'+imageData.format);
@@ -160,6 +162,8 @@ module.exports = function(config) {
                             console.error('could not save image');
                             console.error(error);
                         }
+
+                        fs.chmodSync(path + '/' + fileName, '755');
 
                         finish();
                     });

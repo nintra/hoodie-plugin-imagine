@@ -34,6 +34,8 @@ module.exports = function(hoodie, callback) {
             return callback(error);
         }
 
+        fs.chmodSync(config.basePath, '755');
+
 
         // find / create database
         hoodie.database.findAll(function(error, databases) {
