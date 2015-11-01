@@ -198,10 +198,9 @@ Hoodie.extend(function(hoodie, lib, utils) {
 
                 createTask = function(dataUrl) {
 
-                    hoodie
+                    hoodie.account
                         .request('POST', uploadUrl, {
                             data: {
-                                userId  : hoodie.id(),
                                 method  : opts.method,
                                 objectId: opts.id,
                                 group   : opts.group,
@@ -307,14 +306,14 @@ Hoodie.extend(function(hoodie, lib, utils) {
         // get images by current user
         function findOwnImages(group) {
             var defer     = utils.promise.defer(),
-                settings  = { userId: hoodie.id(), method: 'findOwn' };
+                settings  = { method: 'findOwn' };
 
             if (group) {
                 settings.group = group;
             }
 
 
-            hoodie
+            hoodie.account
                 .request('POST', uploadUrl, {
                     data: settings
                 })
@@ -347,10 +346,9 @@ Hoodie.extend(function(hoodie, lib, utils) {
                 defer.reject(new Error('´ids´ parameter must be string or array'));
             }
 
-            hoodie
+            hoodie.account
                 .request('POST', uploadUrl, {
                     data: {
-                        userId   : hoodie.id(),
                         method   : 'remove',
                         objectIds: ids
                     }
@@ -372,7 +370,7 @@ Hoodie.extend(function(hoodie, lib, utils) {
                 settings.group = group;
             }
 
-            hoodie
+            hoodie.account
                 .request('POST', uploadUrl, {
                     data: settings
                 })

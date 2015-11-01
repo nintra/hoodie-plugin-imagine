@@ -4,7 +4,6 @@ Imagine is a [hoodie](//hood.ie) plugin for handling image uploads. This is a fu
 
 ## features
 - resizes images client-side to reduce traffic and server processing time
-- uploads images when a connection to the server is established: offline first
 - create image groups and types to manage images
 - automated cropping & resizing
 - jpg & png images supported
@@ -41,8 +40,9 @@ hoodie.imagine.removeOwn([group]);
 // a preview image will be returned by a progress call (.add and .update only)
 previewImage.id; // final id of the image, keep it for later ;)
 previewImage.dataUrl; // dataUrl of resized image
-previewImage.width; // dataUrl of resized image
-previewImage.height; // dataUrl of resized image
+previewImage.width; // width of resized image
+previewImage.height; // height of resized image
+previewImage.canvas; // canvas used for resizing, you can copy it to show a preview
 
 // an image object has an id property and a url method. 
 image.id;
@@ -68,6 +68,9 @@ function handleFile(file) {
                             
                 // show preview image
                 $('img.profile-picture').attr('src', image.dataUrl);
+
+                // or copy the canvas
+                canvasContext.drawImage(image.canvas, 0, 0);
             })
             .done(function(image) {
                 // image has been save on the server
@@ -112,12 +115,4 @@ $('#file-input').on('change', handleFileSelect);
 - save images at hosting services
 - integrate [pica](https://github.com/nodeca/pica) for high quality frontend resizing? Current [method](http://stackoverflow.com/questions/17861447/html5-canvas-drawimage-how-to-apply-antialiasing) uses a very fast step-wise canvas resizing with good quality.
 - user blacklist
-- additional data e.g. image size in image objects
 - watermark
-- verify event for user
-- remove event for user
-
-
-## release history
-- 0.2.0 remove verification, simplify image retrieval
-- 0.1.0 initial release
