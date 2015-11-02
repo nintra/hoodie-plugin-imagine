@@ -73,7 +73,7 @@ function handleFile(file) {
                 canvasContext.drawImage(image.canvas, 0, 0);
             })
             .done(function(image) {
-                // image has been save on the server
+                // image has been saved on the server
                 $('img.profile-picture').attr('src', image.url('detail'));
             })
             .fail(function(error) {
@@ -89,19 +89,17 @@ function handleFile(file) {
 function handleFileSelect(ev) {
     ev.preventDefault();
 
-    var files = ev.target.files,
-        i, file;
+    var files = ev.target.files;
 
-    for (i = 0; (file = files[i]); i++) {
-
+    $.each(files, function(index, file) {
         if (!file.type.match('image.*')) {
-            continue;
+            return false;
         }
 
         var reader = new FileReader();
         reader.onload = handleFile(file);
         reader.readAsDataURL(file);
-    }
+    });
 }
 
 $('#file-input').on('change', handleFileSelect);
