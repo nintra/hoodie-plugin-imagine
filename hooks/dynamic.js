@@ -55,7 +55,7 @@ module.exports = function(hoodie) {
                     hoodie.account
                         .find('user', body.userCtx.name.substr(5), function(error, doc) {
                             if (error) {
-                                return reply('user id wrong');
+                                return reply('user id wrong').code(400);
                             }
 
                             data   = request.payload;
@@ -85,6 +85,8 @@ module.exports = function(hoodie) {
                         });
                 }
             );
+
+            return true;
         }
 
     };

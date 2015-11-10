@@ -5,7 +5,9 @@ var config = require('./../../../../hoodie-plugin-imagine/config.json');
 Hoodie.extend(function(hoodie, lib, utils) {
 
 
-    var imagine = (function() {
+    var rxIsUrl = /^https?:\/\/.*/,
+
+        imagine = (function() {
         var uploadUrl = '/_plugins/imagine/_api/image-upload';
 
 
@@ -221,8 +223,8 @@ Hoodie.extend(function(hoodie, lib, utils) {
             }
 
 
-            if (opts.imageData.substr(0,5) !== 'data:') {
-                defer.reject(new Error('invalid data-url'));
+            if (opts.imageData.substr(0,5) !== 'data:' && !rxIsUrl.test(opts.imageData)) {
+                defer.reject(new Error('invalid data-url or url'));
 
             } else {
 

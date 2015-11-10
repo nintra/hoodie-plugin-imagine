@@ -36,8 +36,12 @@ module.exports = function(hoodie) {
         } else if (_.isString(error)) {
             message = error;
 
-        } else if (_.isObject(error) && error.reason) {
-            message = error.error + ': ' + error.reason;
+        } else if (_.isObject(error)) {
+            if (error.error && error.reason) {
+                message = error.error + ': ' + error.reason;
+            } else {
+                message = error.message;
+            }
         }
 
         self.defer.reject(message);

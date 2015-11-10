@@ -19,10 +19,10 @@ Imagine is a [hoodie](//hood.ie) plugin for handling image uploads. This is a fu
 All methods except `.get` are returning promises. Also `.add`, `.update` and `.upsert` call a progress as soon as an image is resized client-side.
 ```javascript
 // uploads an image and returns a image object
-hoodie.imagine.upsert(group, dataUrl);
+hoodie.imagine.upsert(group, dataUrlOrUrl);
 
-hoodie.imagine.add(group, dataUrl);
-hoodie.imagine.update(id, group, dataUrl);
+hoodie.imagine.add(group, dataUrlOrUrl);
+hoodie.imagine.update(id, group, dataUrlOrUrl);
 
 // find an image by an id or an array of ids, returns an image object
 hoodie.imagine.get(id);
@@ -54,7 +54,7 @@ image.url(type);
 There is currently no group/type update mechanism. Your changes will be applied to new uploads only (`.add`, `.update`). You *need* to restart the hoodie server to apply the configuration.
 
 
-## example
+## example with data-url
 ```javascript
 // upload file
 function handleFile(file) {
@@ -62,7 +62,7 @@ function handleFile(file) {
         var dataUrl = ev.target.result;
 
         hoodie.imagine.add('profile', 'data:image/png;base64,...')
-            .progress(function(image) {
+            .progress(function(image) { // gets only called when using data-url
                 // image id and resized image is ready    
                 // image properties: id, dataUrl, width, height, canvas
                             

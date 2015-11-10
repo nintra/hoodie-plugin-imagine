@@ -4,7 +4,9 @@
 var fs = require('fs'),
     _  = require('lodash'),
     shortid     = require('shortid'),
-    revalidator = require('revalidator');
+    revalidator = require('revalidator'),
+
+    rxIsUrl = /^https?:\/\/.*/;
 
 
 
@@ -69,7 +71,7 @@ Utils.prototype.validationRules = function(keys) {
                 required: true,
                 type: 'string',
                 conform: function(data) {
-                    return data.substr(0,5) === 'data:';
+                    return data.substr(0,5) === 'data:' || rxIsUrl.test(data);
                 },
                 messages: {
                     conform: 'invalid data'
