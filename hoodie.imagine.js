@@ -1,5 +1,5 @@
 
-var config = require('./../../../../hoodie-plugin-imagine/config.json');
+var config = require('./../../hoodie-plugin-imagine/config.json');
 
 
 Hoodie.extend(function(hoodie, lib, utils) {
