@@ -32,19 +32,11 @@ module.exports = function(hoodie) {
             types: [
                 {
                     id     : 'E1cnGYY41cIVtF',
-                    name   : 'thumb',
+                    name   : 'admin-preview',
                     resize : [150, 150],
                     method : 'cover',
                     format : 'jpg',
                     quality: 90
-                },
-                {
-                    id     : 'VkHcbtFVJQfZtF',
-                    name   : 'detail',
-                    resize : [500, 500],
-                    method : 'contain',
-                    format : 'jpg',
-                    quality: 85
                 }
             ]
         };
